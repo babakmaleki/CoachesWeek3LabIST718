@@ -1,0 +1,656 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled2.ipynb",
+      "version": "0.3.2",
+      "provenance": [],
+      "private_outputs": true,
+      "collapsed_sections": [],
+      "toc_visible": true,
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/babakmaleki/CoachesWeek3LabIST718/blob/master/IST%20718_Final_Project\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "q19QMCKZ1sLN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from __future__ import print_function  # Compatability with Python 3\n",
+        "print( 'Print function ready to serve.' )\n",
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "pd.set_option('display.max_columns', 100)\n",
+        "from matplotlib import pyplot as plt\n",
+        "%matplotlib inline \n",
+        "import seaborn as sns"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "VcHHl2782P-b",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "# Load real estate data from CSV\n",
+        "crimes = pd.read_csv('Crimes_-_2001_to_present (1).csv', index_col='Date')\n",
+        "\n",
+        "CCAP = pd.read_csv('ReferenceCCAProfiles20122016.csv')\n",
+        "\n",
+        "display('crimes', 'CCAP', \"pd.merge(crimes, CCAP)\")"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qkt-5x5l7rVc",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "print(type(crimes))"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "BC1P_mUs74rU",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "crimes = crimes.iloc[:, 2: ]\n",
+        "crimes.head()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nHC_wT5xtOhN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "print(crimes.shape)\n",
+        "print(crimes.head())"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "use9P0x38M0u",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "s = crimes[['Primary Type']]"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "igH5ibX28dtP",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "s.head()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "YkGrV3mLWGNz",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "crime_count = pd.DataFrame(s.groupby('Primary Type').size().sort_values(ascending=False).rename('counts').reset_index())"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "e7mU2uPMW_3O",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "crime_count.head()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "pP1py_m6ZK7_",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "crime_count.shape"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "NsY-kyb1bvwv",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import seaborn as sns\n",
+        "import matplotlib.pyplot as plt\n",
+        "sns.set(style=\"whitegrid\")\n",
+        "\n",
+        "# Initialize the matplotlib figure\n",
+        "f, ax = plt.subplots(figsize=(6, 15))\n",
+        "\n",
+        "\n",
+        "# Plot the total crashes\n",
+        "sns.set_color_codes(\"pastel\")\n",
+        "sns.barplot(x=\"counts\", y=\"Primary Type\", data=crime_count.iloc[:10, :],\n",
+        "            label=\"Total\", color=\"b\")\n",
+        "\n",
+        "ax.legend(ncol=2, loc=\"lower right\", frameon=True)\n",
+        "ax.set(ylabel=\"Type\",\n",
+        "       xlabel=\"Crimes\")\n",
+        "sns.despine(left=True, bottom=True)\n",
+        "\n",
+        "# Add a legend and informative axis label\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GYN7xhNmnQ5-",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Domestic Violence"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "UQhlYVz_nTd5",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "domestic_yearly = crimes[crimes['Domestic'] == True]['Domestic']\n",
+        "print(domestic_yearly.head())"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "hRX7fpbr2_Qo",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Location Description"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "rvcDjy0bpI-E",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "plt.figure(figsize = (15, 10))\n",
+        "sns.countplot(y= 'Location Description', data = crimes, order = crimes['Location Description'].value_counts().iloc[:10].index)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "hjYesGrojwEV",
+        "colab_type": "text"
+      },
+      "source": [
+        "## **Arrests**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "LNVjAOc4iPzy",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "crimes.index = pd.to_datetime(crimes.index)\n",
+        "crimes_2014 = crimes.loc['2014']\n",
+        "crimes_2015 = crimes.loc['2015']\n",
+        "crimes_2016 = crimes.loc['2016']\n",
+        "crimes_2017 = crimes.loc['2017']\n",
+        "crimes_2018 = crimes.loc['2018']\n",
+        "crimes_2019 = crimes.loc['2019']\n",
+        "\n",
+        "## Yearly crimes\n",
+        "arrest_yearly = crimes[crimes['Arrest'] == True]['Arrest']"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "jLN1VdnBLZZp",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "print(arrest_yearly.head())"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "dpmcpIo0hqDl",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "plt.subplot()\n",
+        "# yearly arrest\n",
+        "arrest_yearly.resample('A').sum().plot()\n",
+        "plt.title('Yearly arrests')\n",
+        "plt.show()\n",
+        "# Monthly arrest\n",
+        "arrest_yearly.resample('M').sum().plot()\n",
+        "plt.title('Monthly arrests')\n",
+        "plt.show()\n",
+        "# Weekly arrest\n",
+        "arrest_yearly.resample('W').sum().plot()\n",
+        "plt.title('Weekly arrests')\n",
+        "plt.show()\n",
+        "# daily arrest\n",
+        "arrest_yearly.resample('D').sum().plot()\n",
+        "plt.title('Daily arrests')\n",
+        "plt.show()\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "SWxY5Adej8rZ",
+        "colab_type": "text"
+      },
+      "source": [
+        "## **Domestic violence**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "hTMYyBAFkAP1",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "domestic_yearly = crimes[crimes['Domestic'] == True]['Domestic']\n",
+        "print(domestic_yearly.head())"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "HugsHV1qkFJn",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "plt.subplot()\n",
+        "# yearly domestic violence\n",
+        "domestic_yearly.resample('A').sum().plot()\n",
+        "plt.title('Yearly domestic violence')\n",
+        "plt.show()\n",
+        "# Monthly domestic violence\n",
+        "domestic_yearly.resample('M').sum().plot()\n",
+        "plt.title('Monthly domestic violence')\n",
+        "plt.show()\n",
+        "# Weekly domestic violence\n",
+        "domestic_yearly.resample('W').sum().plot()\n",
+        "plt.title('Weekly domestic violence')\n",
+        "plt.show()\n",
+        "# daily domestic violence\n",
+        "domestic_yearly.resample('D').sum().plot()\n",
+        "plt.title('Daily domestic violence')\n",
+        "plt.show()\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "TzGwnjLgkRT1",
+        "colab_type": "text"
+      },
+      "source": [
+        "## **Top 5 crimes trend over the years**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7gRo2HiHkWxW",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Monthly"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qm4iTITYkUej",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "theft_2015 = pd.DataFrame(crimes_2015[crimes_2015['Primary Type'].isin(['THEFT','BATTERY', 'CRIMINAL DAMAGE', 'NARCOTICS', 'ASSAULT'])]['Primary Type'])\n",
+        "theft_2016 = pd.DataFrame(crimes_2016[crimes_2016['Primary Type'].isin(['THEFT','BATTERY', 'CRIMINAL DAMAGE', 'NARCOTICS', 'ASSAULT'])]['Primary Type'])\n",
+        "theft_2017 = pd.DataFrame(crimes_2017[crimes_2017['Primary Type'].isin(['THEFT','BATTERY', 'CRIMINAL DAMAGE', 'NARCOTICS', 'ASSAULT'])]['Primary Type'])\n",
+        "theft_2018 = pd.DataFrame(crimes_2018[crimes_2018['Primary Type'].isin(['THEFT','BATTERY', 'CRIMINAL DAMAGE', 'NARCOTICS', 'ASSAULT'])]['Primary Type'])\n",
+        "theft_2019 = pd.DataFrame(crimes_2019[crimes_2019['Primary Type'].isin(['THEFT','BATTERY', 'CRIMINAL DAMAGE', 'NARCOTICS', 'ASSAULT'])]['Primary Type'])"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "gDoY8QpTkltZ",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "grouper = theft_2015.groupby([pd.TimeGrouper('M'), 'Primary Type'])\n",
+        "grouper_2016 = theft_2016.groupby([pd.TimeGrouper('M'), 'Primary Type'])\n",
+        "grouper_2017 = theft_2017.groupby([pd.TimeGrouper('M'), 'Primary Type'])\n",
+        "grouper_2018 = theft_2018.groupby([pd.TimeGrouper('M'), 'Primary Type'])\n",
+        "grouper_2019 = theft_2019.groupby([pd.TimeGrouper('M'), 'Primary Type'])"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "JpZTGohLkomA",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2015 = grouper['Primary Type'].count().unstack()\n",
+        "data_2016 = grouper_2016['Primary Type'].count().unstack()\n",
+        "data_2017 = grouper_2017['Primary Type'].count().unstack()\n",
+        "data_2018 = grouper_2018['Primary Type'].count().unstack()\n",
+        "data_2019 = grouper_2019['Primary Type'].count().unstack()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sbP4s4vYksN2",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2017.plot()\n",
+        "plt.title(\"Top 5 monthly crimes in 2017\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "WCKZdOEamtme",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2018.plot()\n",
+        "plt.title(\"Top 5 monthly crimes in 2018\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Frcubby5m3BG",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2019.plot()\n",
+        "plt.title(\"Top 5 monthly crimes 2019\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Buy-YU53m_Tv",
+        "colab_type": "text"
+      },
+      "source": [
+        "## **Weekly**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "k_gCz308nB38",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "grouper = theft_2015.groupby([pd.TimeGrouper('W'), 'Primary Type'])\n",
+        "grouper_2016 = theft_2016.groupby([pd.TimeGrouper('W'), 'Primary Type'])\n",
+        "grouper_2017 = theft_2017.groupby([pd.TimeGrouper('W'), 'Primary Type'])\n",
+        "grouper_2018 = theft_2018.groupby([pd.TimeGrouper('W'), 'Primary Type'])\n",
+        "grouper_2019 = theft_2019.groupby([pd.TimeGrouper('W'), 'Primary Type'])\n",
+        "\n",
+        "data_2015 = grouper['Primary Type'].count().unstack()\n",
+        "data_2016 = grouper_2016['Primary Type'].count().unstack()\n",
+        "data_2017 = grouper_2017['Primary Type'].count().unstack()\n",
+        "data_2018 = grouper_2018['Primary Type'].count().unstack()\n",
+        "data_2019 = grouper_2019['Primary Type'].count().unstack()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "cY3N9X4-nXCI",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2017.plot()\n",
+        "plt.title(\"Top 5 Weekly crimes 2017\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "znUihfCjnoaF",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2018.plot()\n",
+        "plt.title(\"Top 5 Weekly crimes 2018\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_6ckmVUgnt36",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2019.plot()\n",
+        "plt.title(\"Top 5 Weekly crimes 2019\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7TwJszE3n0h1",
+        "colab_type": "text"
+      },
+      "source": [
+        "## **Daily**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ZqbdmpmUn4ic",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "grouper = theft_2015.groupby([pd.TimeGrouper('D'), 'Primary Type'])\n",
+        "grouper_2016 = theft_2016.groupby([pd.TimeGrouper('D'), 'Primary Type'])\n",
+        "grouper_2017 = theft_2017.groupby([pd.TimeGrouper('D'), 'Primary Type'])\n",
+        "grouper_2018 = theft_2018.groupby([pd.TimeGrouper('D'), 'Primary Type'])\n",
+        "grouper_2019 = theft_2019.groupby([pd.TimeGrouper('D'), 'Primary Type'])\n",
+        "\n",
+        "data_2015 = grouper['Primary Type'].count().unstack()\n",
+        "data_2016 = grouper_2016['Primary Type'].count().unstack()\n",
+        "data_2017 = grouper_2017['Primary Type'].count().unstack()\n",
+        "data_2018 = grouper_2018['Primary Type'].count().unstack()\n",
+        "data_2019 = grouper_2019['Primary Type'].count().unstack()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Ysmrq0DxoKpU",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2017.plot()\n",
+        "plt.title(\"Top 5 daily crimes 2017\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "SHt5G6LgoQMw",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2018.plot()\n",
+        "plt.title(\"Top 5 daily crimes 2018\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "kDmRer_xoVQN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "data_2019.plot()\n",
+        "plt.title(\"Top 5 daily crimes 2019\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    }
+  ]
+}
